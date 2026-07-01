@@ -4,6 +4,7 @@
     "strict": true,
     "module": "ESNext",
     "forceConsistentCasingInFileNames": true,
+    "customConditions": ["react-native-strict-api"],
     "paths": {
       "@/*": ["./src/*"]
     }
