@@ -1,32 +1,28 @@
 import { useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { MESSAGE_MAX_LENGTH } from "@/config/constants";
 import { colors, radii, spacing, typography } from "@/theme";
+import { isValidMessageText } from "@/utils/messageValidation";
 
 interface MessageInputProps {
-  onSend: (text: string) => void;
+  onSend: (text: string) => boolean;
   disabled?: boolean;
 }
 
 export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
   const [text, setText] = useState("");
-  const [isSending, setIsSending] = useState(false);
 
-  const canSend = text.trim().length > 0 && !disabled && !isSending;
+  const canSend = isValidMessageText(text) && !disabled;
 
   function handleSend() {
     if (!canSend) {
       return;
     }
 
-    const value = text.trim();
-    setText("");
-    setIsSending(true);
+    const sent = onSend(text);
 
-    try {
-      onSend(value);
-    } finally {
-      setIsSending(false);
+    if (sent) {
+      setText("");
     }
   }
 
@@ -40,7 +36,7 @@ export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
         placeholderTextColor={colors.textMuted}
         multiline
         maxLength={MESSAGE_MAX_LENGTH}
-        editable={!disabled && !isSending}
+        editable={!disabled}
         onSubmitEditing={handleSend}
         blurOnSubmit={false}
       />
@@ -49,11 +45,7 @@ export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
         onPress={handleSend}
         disabled={!canSend}
       >
-        {isSending ? (
-          <ActivityIndicator color={colors.accentText} size="small" />
-        ) : (
-          <Text style={styles.buttonText}>Send</Text>
-        )}
+        <Text style={styles.buttonText}>Send</Text>
       </Pressable>
     </View>
   );

@@ -4,7 +4,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ChatBubble } from "@/components/ChatBubble";
 import { ChatHeader } from "@/components/ChatHeader";
+import { ConnectionBanner } from "@/components/ConnectionBanner";
 import { TypingArea } from "@/components/TypingArea";
+import { ChatProvider } from "@/context/ChatContext";
 import { useSession } from "@/context/SessionContext";
 import { useChat } from "@/hooks/useChat";
 import type { RootStackParamList } from "@/navigation/types";
@@ -13,14 +15,14 @@ import type { Message, Session } from "@/types";
 
 type ChatScreenProps = NativeStackScreenProps<RootStackParamList, "Chat">;
 
-interface ChatScreenContentProps {
+interface ChatViewProps {
   session: Session;
   onLeave: () => void;
 }
 
-function ChatScreenContent({ session, onLeave }: ChatScreenContentProps) {
+function ChatView({ session, onLeave }: ChatViewProps) {
   const listRef = useRef<FlatList<Message>>(null);
-  const { messages, connectionStatus, sendMessage } = useChat({ session });
+  const { messages, connectionStatus, sendMessage } = useChat();
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -40,6 +42,8 @@ function ChatScreenContent({ session, onLeave }: ChatScreenContentProps) {
         connectionStatus={connectionStatus}
         onLeave={onLeave}
       />
+
+      <ConnectionBanner status={connectionStatus} />
 
       <FlatList
         ref={listRef}
@@ -61,6 +65,19 @@ function ChatScreenContent({ session, onLeave }: ChatScreenContentProps) {
 
       <TypingArea onSend={sendMessage} disabled={connectionStatus !== "connected"} />
     </>
+  );
+}
+
+interface ChatScreenContentProps {
+  session: Session;
+  onLeave: () => void;
+}
+
+function ChatScreenContent({ session, onLeave }: ChatScreenContentProps) {
+  return (
+    <ChatProvider session={session}>
+      <ChatView session={session} onLeave={onLeave} />
+    </ChatProvider>
   );
 }
 

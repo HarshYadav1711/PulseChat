@@ -4,7 +4,7 @@ import { MessageInput } from "@/components/MessageInput";
 import { colors, spacing } from "@/theme";
 
 interface TypingAreaProps {
-  onSend: (text: string) => void;
+  onSend: (text: string) => boolean;
   disabled?: boolean;
 }
 
