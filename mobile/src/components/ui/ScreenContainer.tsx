@@ -11,8 +11,8 @@ interface ScreenContainerProps {
 export function ScreenContainer({ children, edges }: ScreenContainerProps) {
   return (
     <View style={styles.container}>
-      <SafeAreaView edges={edges}>
-        <View style={styles.content}>{children}</View>
+      <SafeAreaView edges={edges} style={styles.safeArea}>
+        {children}
       </SafeAreaView>
     </View>
   );
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  content: {
+  safeArea: {
     flex: 1,
   },
 });

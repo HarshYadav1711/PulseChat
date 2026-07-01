@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MessageInput } from "@/components/MessageInput";
 import { isChatReady } from "@/config/connectionStatus";
@@ -16,19 +16,15 @@ export function TypingArea({ onSend, connectionStatus, isJoined }: TypingAreaPro
   const disabled = !isChatReady({ connectionStatus, isJoined });
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 8 : 0}
-    >
-      <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, spacing.md) }]}>
-        <MessageInput onSend={onSend} disabled={disabled} />
-      </View>
-    </KeyboardAvoidingView>
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, spacing.md) }]}>
+      <MessageInput onSend={onSend} disabled={disabled} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flexShrink: 0,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
     backgroundColor: colors.surface,

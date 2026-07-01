@@ -26,6 +26,7 @@ export function MessageList({ messages, currentUserId, isLoadingHistory }: Messa
   return (
     <FlatList
       ref={listRef}
+      style={styles.list}
       data={messages}
       keyExtractor={(item) => item.id}
       renderItem={renderItem}
@@ -49,6 +50,9 @@ export function MessageList({ messages, currentUserId, isLoadingHistory }: Messa
 }
 
 const styles = StyleSheet.create({
+  list: {
+    flex: 1,
+  },
   content: {
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.lg,

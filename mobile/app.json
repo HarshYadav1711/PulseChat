@@ -25,6 +25,7 @@
       },
       "package": "com.pulsechat.app",
       "usesCleartextTraffic": true,
+      "softwareKeyboardLayoutMode": "resize",
       "predictiveBackGestureEnabled": false
     },
     "web": {

@@ -1,10 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { Alert, BackHandler, StyleSheet, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ChatHeader } from "@/components/ChatHeader";
-import { ConnectionBanner } from "@/components/ConnectionBanner";
-import { MessageList } from "@/components/MessageList";
-import { TypingArea } from "@/components/TypingArea";
+import { ChatView } from "@/components/ChatView";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
 import { ChatProvider, useChat } from "@/context/ChatContext";
 import { useSession } from "@/context/SessionContext";
@@ -13,37 +10,23 @@ import type { Session } from "@/types";
 
 type ChatScreenProps = NativeStackScreenProps<RootStackParamList, "Chat">;
 
-interface ChatViewProps {
+interface ChatScreenContentProps {
   session: Session;
   onLeave: () => void;
 }
 
-function ChatView({ session, onLeave }: ChatViewProps) {
+function ChatScreenContent({ session, onLeave }: ChatScreenContentProps) {
   const { messages, connectionStatus, isJoined, sendMessage } = useChat();
-  const isLoadingHistory = !isJoined;
 
   return (
-    <>
-      <ChatHeader
-        username={session.username}
-        connectionStatus={connectionStatus}
-        onLeave={onLeave}
-      />
-
-      <ConnectionBanner status={connectionStatus} />
-
-      <MessageList
-        messages={messages}
-        currentUserId={session.userId}
-        isLoadingHistory={isLoadingHistory}
-      />
-
-      <TypingArea
-        onSend={sendMessage}
-        connectionStatus={connectionStatus}
-        isJoined={isJoined}
-      />
-    </>
+    <ChatView
+      session={session}
+      connectionStatus={connectionStatus}
+      isJoined={isJoined}
+      messages={messages}
+      onLeave={onLeave}
+      onSend={sendMessage}
+    />
   );
 }
 
@@ -89,7 +72,7 @@ export function ChatScreen({ navigation }: ChatScreenProps) {
     <ScreenContainer edges={["top"]}>
       <View style={styles.content}>
         <ChatProvider session={session}>
-          <ChatView session={session} onLeave={handleLeave} />
+          <ChatScreenContent session={session} onLeave={handleLeave} />
         </ChatProvider>
       </View>
     </ScreenContainer>
