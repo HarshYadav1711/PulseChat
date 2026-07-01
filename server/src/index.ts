@@ -93,7 +93,16 @@ async function startServer(): Promise<void> {
   });
 }
 
-startServer().catch((error) => {
+startServer().catch((error: NodeJS.ErrnoException) => {
+  if (error.code === "EADDRINUSE") {
+    logError(
+      `Port ${env.port} is already in use. Stop the other process or set PORT to a different value.`,
+      error,
+    );
+    process.exit(1);
+    return;
+  }
+
   logError("Failed to start server", error);
   process.exit(1);
 });

@@ -8,8 +8,8 @@
     "server"
   ],
   "scripts": {
-    "dev:server": "npm run dev --workspace @pulsechat/server",
-    "dev:mobile": "npm start --workspace @pulsechat/mobile",
+    "dev:server": "node scripts/free-port.mjs 3001 && npm run dev --workspace @pulsechat/server",
+    "dev:mobile": "node scripts/free-port.mjs 8081 && npm start --workspace @pulsechat/mobile",
     "build:server": "npm run build --workspace @pulsechat/server",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
@@ -28,5 +28,11 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "overrides": {
+    "expo": "~54.0.34",
+    "babel-preset-expo": "~54.0.0",
+    "react": "19.1.0",
+    "react-native": "0.81.5"
   }
 }

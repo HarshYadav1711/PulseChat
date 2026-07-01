@@ -75,7 +75,7 @@ flowchart TB
 
 | Layer | Technologies |
 |-------|--------------|
-| Mobile | React Native 0.86, Expo 57, TypeScript, React Navigation, Socket.IO Client |
+| Mobile | React Native 0.81, Expo SDK 54, TypeScript, React Navigation, Socket.IO Client |
 | Server | Node.js 18+, Express 4, Socket.IO 4, TypeScript |
 | Tooling | npm workspaces, ESLint, Prettier, tsx (server dev), tsc-alias (server build) |
 
