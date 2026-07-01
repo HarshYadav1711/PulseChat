@@ -2,11 +2,31 @@
   "name": "pulsechat",
   "version": "1.0.0",
   "private": true,
-  "description": "Basic real-time chat application — internship assessment",
+  "description": "PulseChat monorepo — real-time chat application",
+  "workspaces": [
+    "mobile",
+    "server"
+  ],
   "scripts": {
-    "server:dev": "npm run dev --prefix server",
-    "server:build": "npm run build --prefix server",
-    "mobile:start": "npm start --prefix mobile",
-    "mobile:android": "npm run android --prefix mobile"
+    "dev:server": "npm run dev --workspace @pulsechat/server",
+    "dev:mobile": "npm start --workspace @pulsechat/mobile",
+    "build:server": "npm run build --workspace @pulsechat/server",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.37.3",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
+    "typescript-eslint": "^8.18.2"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
