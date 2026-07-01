@@ -2,19 +2,24 @@ import { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from "@/config/constants";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
+import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { USERNAME_MAX_LENGTH } from "@/config/constants";
 import { useSession } from "@/context/SessionContext";
 import type { RootStackParamList } from "@/navigation/types";
 import { colors, radii, spacing, typography } from "@/theme";
 import { createUserId } from "@/utils/createUserId";
+import {
+  getUsernameValidationMessage,
+  isValidUsername,
+  normalizeUsername,
+} from "@/utils/usernameValidation";
 
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, "Login">;
 
@@ -23,74 +28,80 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const trimmedUsername = username.trim();
-  const canContinue =
-    trimmedUsername.length >= USERNAME_MIN_LENGTH && trimmedUsername.length <= USERNAME_MAX_LENGTH;
+  const canContinue = isValidUsername(username);
 
   function handleContinue() {
     if (!canContinue) {
-      setError(
-        `Enter a name between ${USERNAME_MIN_LENGTH} and ${USERNAME_MAX_LENGTH} characters.`,
-      );
+      setError(getUsernameValidationMessage());
       return;
     }
 
     setError(null);
     setSession({
       userId: createUserId(),
-      username: trimmedUsername,
+      username: normalizeUsername(username),
     });
     navigation.replace("Chat");
   }
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView>
-        <KeyboardAvoidingView
-          style={styles.flex}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-        >
-          <View style={styles.content}>
-            <Text style={styles.title}>Welcome</Text>
-            <Text style={styles.subtitle}>
-              Choose a display name to enter the chat. No password required.
+    <ScreenContainer>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <View style={styles.content}>
+          <Text style={styles.title} accessibilityRole="header">
+            Welcome
+          </Text>
+          <Text style={styles.subtitle}>
+            Choose a display name to enter the chat. No password required.
+          </Text>
+
+          <Text style={styles.label} nativeID="username-label">
+            Display name
+          </Text>
+          <TextInput
+            style={styles.input}
+            value={username}
+            onChangeText={(value) => {
+              setUsername(value);
+              if (error) {
+                setError(null);
+              }
+            }}
+            placeholder="Your name"
+            placeholderTextColor={colors.textMuted}
+            autoCapitalize="none"
+            autoCorrect={false}
+            maxLength={USERNAME_MAX_LENGTH}
+            onSubmitEditing={handleContinue}
+            returnKeyType="done"
+            accessibilityLabel="Display name"
+            accessibilityLabelledBy="username-label"
+          />
+
+          {error ? (
+            <Text style={styles.error} accessibilityRole="alert">
+              {error}
             </Text>
+          ) : null}
 
-            <Text style={styles.label}>Display name</Text>
-            <TextInput
-              style={styles.input}
-              value={username}
-              onChangeText={setUsername}
-              placeholder="Your name"
-              placeholderTextColor={colors.textMuted}
-              autoCapitalize="none"
-              autoCorrect={false}
-              maxLength={USERNAME_MAX_LENGTH}
-              onSubmitEditing={handleContinue}
-              returnKeyType="done"
-            />
-
-            {error ? <Text style={styles.error}>{error}</Text> : null}
-
-            <Pressable
-              style={[styles.button, !canContinue && styles.buttonDisabled]}
+          <View style={styles.buttonContainer}>
+            <PrimaryButton
+              label="Continue"
               onPress={handleContinue}
               disabled={!canContinue}
-            >
-              <Text style={styles.buttonText}>Continue</Text>
-            </Pressable>
+              accessibilityHint="Creates a session and opens the chat"
+            />
           </View>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </View>
+        </View>
+      </KeyboardAvoidingView>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   flex: {
     flex: 1,
   },
@@ -131,19 +142,7 @@ const styles = StyleSheet.create({
     color: colors.error,
     marginBottom: spacing.md,
   },
-  button: {
-    height: 52,
-    borderRadius: radii.md,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.accent,
+  buttonContainer: {
     marginTop: spacing.sm,
-  },
-  buttonDisabled: {
-    backgroundColor: colors.textMuted,
-  },
-  buttonText: {
-    ...typography.button,
-    color: colors.accentText,
   },
 });

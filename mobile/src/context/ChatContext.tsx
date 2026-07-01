@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { Alert } from "react-native";
+import { isChatReady } from "@/config/connectionStatus";
 import { ChatSocketService } from "@/services/chatSocketService";
 import { chatReducer, initialChatState } from "@/state/chatReducer";
 import type { ConnectionStatus, Message, Session } from "@/types";
@@ -57,7 +58,7 @@ export function ChatProvider({ session, children }: ChatProviderProps) {
 
   const sendMessage = useCallback(
     (text: string): boolean => {
-      if (state.connectionStatus !== "connected" || !isValidMessageText(text)) {
+      if (!isChatReady(state.connectionStatus) || !isValidMessageText(text)) {
         return false;
       }
 
@@ -79,11 +80,11 @@ export function ChatProvider({ session, children }: ChatProviderProps) {
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
 }
 
-export function useChatContext(): ChatContextValue {
+export function useChat(): ChatContextValue {
   const context = useContext(ChatContext);
 
   if (!context) {
-    throw new Error("useChatContext must be used within ChatProvider.");
+    throw new Error("useChat must be used within ChatProvider.");
   }
 
   return context;

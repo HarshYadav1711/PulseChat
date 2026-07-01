@@ -12,8 +12,3 @@ export interface Session {
 }
 
 export type ConnectionStatus = "connected" | "connecting" | "disconnected";
-
-export interface UserPresence {
-  userId: string;
-  username: string;
-}

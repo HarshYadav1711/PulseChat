@@ -1,15 +1,18 @@
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MessageInput } from "@/components/MessageInput";
+import { isChatReady } from "@/config/connectionStatus";
 import { colors, spacing } from "@/theme";
+import type { ConnectionStatus } from "@/types";
 
 interface TypingAreaProps {
   onSend: (text: string) => boolean;
-  disabled?: boolean;
+  connectionStatus: ConnectionStatus;
 }
 
-export function TypingArea({ onSend, disabled = false }: TypingAreaProps) {
+export function TypingArea({ onSend, connectionStatus }: TypingAreaProps) {
   const insets = useSafeAreaInsets();
+  const disabled = !isChatReady(connectionStatus);
 
   return (
     <KeyboardAvoidingView

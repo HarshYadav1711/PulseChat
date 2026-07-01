@@ -3,8 +3,6 @@ export const SOCKET_EVENTS = {
   SEND_MESSAGE: "send_message",
   HISTORY: "history",
   NEW_MESSAGE: "new_message",
-  USER_JOINED: "user_joined",
-  USER_LEFT: "user_left",
   ERROR: "error",
 } as const;
 
@@ -14,3 +12,5 @@ export const MESSAGE_MAX_LENGTH = 1000;
 
 export const SOCKET_RECONNECTION_DELAY_MS = 1000;
 export const SOCKET_RECONNECTION_DELAY_MAX_MS = 5000;
+
+export const SPLASH_DURATION_MS = 1200;

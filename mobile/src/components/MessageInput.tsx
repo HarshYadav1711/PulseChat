@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { MESSAGE_MAX_LENGTH } from "@/config/constants";
 import { colors, radii, spacing, typography } from "@/theme";
 import { isValidMessageText } from "@/utils/messageValidation";
@@ -11,7 +12,6 @@ interface MessageInputProps {
 
 export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
   const [text, setText] = useState("");
-
   const canSend = isValidMessageText(text) && !disabled;
 
   function handleSend() {
@@ -19,9 +19,7 @@ export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
       return;
     }
 
-    const sent = onSend(text);
-
-    if (sent) {
+    if (onSend(text)) {
       setText("");
     }
   }
@@ -39,14 +37,16 @@ export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
         editable={!disabled}
         onSubmitEditing={handleSend}
         blurOnSubmit={false}
+        accessibilityLabel="Message input"
+        accessibilityHint="Type your message and press send"
       />
-      <Pressable
-        style={[styles.button, !canSend && styles.buttonDisabled]}
+      <PrimaryButton
+        label="Send"
         onPress={handleSend}
         disabled={!canSend}
-      >
-        <Text style={styles.buttonText}>Send</Text>
-      </Pressable>
+        compact
+        accessibilityHint="Sends the current message"
+      />
     </View>
   );
 }
@@ -69,21 +69,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     ...typography.body,
     color: colors.textPrimary,
-  },
-  button: {
-    minWidth: 72,
-    height: 44,
-    borderRadius: radii.md,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.accent,
-    paddingHorizontal: spacing.lg,
-  },
-  buttonDisabled: {
-    backgroundColor: colors.textMuted,
-  },
-  buttonText: {
-    ...typography.button,
-    color: colors.accentText,
   },
 });

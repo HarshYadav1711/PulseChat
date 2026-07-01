@@ -15,6 +15,7 @@ export const colors = {
   bubbleOwn: "#2563EB",
   bubbleOther: "#FFFFFF",
   bubbleOtherBorder: "#E2E8F0",
+  bubbleOwnTimestamp: "#BFDBFE",
 } as const;
 
 export const spacing = {

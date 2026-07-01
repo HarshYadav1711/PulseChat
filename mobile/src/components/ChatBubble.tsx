@@ -9,18 +9,33 @@ interface ChatBubbleProps {
 }
 
 export function ChatBubble({ message, isOwnMessage }: ChatBubbleProps) {
+  const timestamp = formatTimestamp(message.timestamp);
+  const accessibilityLabel = isOwnMessage
+    ? `You said ${message.text}${timestamp ? `, ${timestamp}` : ""}`
+    : `${message.username} said ${message.text}${timestamp ? `, ${timestamp}` : ""}`;
+
   return (
-    <View style={[styles.row, isOwnMessage ? styles.rowOwn : styles.rowOther]}>
+    <View
+      style={[styles.row, isOwnMessage ? styles.rowOwn : styles.rowOther]}
+      accessibilityRole="text"
+      accessibilityLabel={accessibilityLabel}
+    >
       <View style={[styles.bubble, isOwnMessage ? styles.bubbleOwn : styles.bubbleOther]}>
-        {!isOwnMessage ? <Text style={styles.username}>{message.username}</Text> : null}
+        {!isOwnMessage ? (
+          <Text style={styles.username} accessibilityRole="header">
+            {message.username}
+          </Text>
+        ) : null}
         <Text style={[styles.text, isOwnMessage ? styles.textOwn : styles.textOther]}>
           {message.text}
         </Text>
-        <Text
-          style={[styles.timestamp, isOwnMessage ? styles.timestampOwn : styles.timestampOther]}
-        >
-          {formatTimestamp(message.timestamp)}
-        </Text>
+        {timestamp ? (
+          <Text
+            style={[styles.timestamp, isOwnMessage ? styles.timestampOwn : styles.timestampOther]}
+          >
+            {timestamp}
+          </Text>
+        ) : null}
       </View>
     </View>
   );
@@ -73,7 +88,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   timestampOwn: {
-    color: "#BFDBFE",
+    color: colors.bubbleOwnTimestamp,
     textAlign: "right",
   },
   timestampOther: {

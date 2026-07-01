@@ -1,1 +1,0 @@
-export { useChatContext as useChat } from "@/context/ChatContext";

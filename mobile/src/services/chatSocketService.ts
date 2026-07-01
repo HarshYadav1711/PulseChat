@@ -19,8 +19,8 @@ export class ChatSocketService {
   private session: Session | null = null;
 
   connect(session: Session, callbacks: ChatSocketCallbacks): void {
-    this.session = session;
     this.disconnect();
+    this.session = session;
 
     const socket = io(env.serverUrl, {
       transports: ["websocket"],
@@ -63,10 +63,6 @@ export class ChatSocketService {
     this.socket.disconnect();
     this.socket = null;
     this.session = null;
-  }
-
-  isConnected(): boolean {
-    return this.socket?.connected ?? false;
   }
 
   private attachListeners(socket: Socket, callbacks: ChatSocketCallbacks): void {

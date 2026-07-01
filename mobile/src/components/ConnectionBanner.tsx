@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
+import { getConnectionBannerMessage } from "@/config/connectionStatus";
 import { colors, spacing, typography } from "@/theme";
 import type { ConnectionStatus } from "@/types";
 
@@ -6,20 +7,20 @@ interface ConnectionBannerProps {
   status: ConnectionStatus;
 }
 
-const BANNER_MESSAGES: Partial<Record<ConnectionStatus, string>> = {
-  connecting: "Reconnecting… Messages will sync when back online.",
-  disconnected: "You are offline. Messages will send when reconnected.",
-};
-
 export function ConnectionBanner({ status }: ConnectionBannerProps) {
-  const message = BANNER_MESSAGES[status];
+  const message = getConnectionBannerMessage(status);
 
   if (!message) {
     return null;
   }
 
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      accessibilityRole="text"
+      accessibilityLiveRegion="polite"
+      accessibilityLabel={message}
+    >
       <Text style={styles.text}>{message}</Text>
     </View>
   );
