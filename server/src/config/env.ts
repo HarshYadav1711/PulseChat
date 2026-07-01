@@ -4,5 +4,4 @@ const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "*";
 export const env = {
   port: PORT,
   clientOrigin: CLIENT_ORIGIN,
-  isDev: process.env.NODE_ENV !== "production",
 } as const;

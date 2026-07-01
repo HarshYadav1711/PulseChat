@@ -3,7 +3,12 @@ import { colors, spacing, typography } from "@/theme";
 
 export function ChatEmptyState() {
   return (
-    <View style={styles.container} accessibilityRole="text">
+    <View
+      style={styles.container}
+      accessible
+      accessibilityRole="text"
+      accessibilityLabel="No messages yet. Send a message to start the conversation."
+    >
       <Text style={styles.title}>No messages yet</Text>
       <Text style={styles.subtitle}>Send a message to start the conversation.</Text>
     </View>

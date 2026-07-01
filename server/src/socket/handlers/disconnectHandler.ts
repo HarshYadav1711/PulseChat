@@ -1,9 +1,9 @@
-import type { Server, Socket } from "socket.io";
 import { SOCKET_EVENTS } from "@/config/constants";
+import type { Server, Socket } from "socket.io";
 import { logInfo } from "@/utils/logger";
 
 export function registerDisconnectHandler(_io: Server, socket: Socket): void {
-  socket.on("disconnect", (reason) => {
+  socket.on(SOCKET_EVENTS.DISCONNECT, (reason) => {
     const userId = socket.data.userId;
     const username = socket.data.username;
 

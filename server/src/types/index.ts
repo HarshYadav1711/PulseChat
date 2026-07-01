@@ -16,8 +16,3 @@ export interface SendMessagePayload {
   username: string;
   text: string;
 }
-
-export interface UserPresence {
-  userId: string;
-  username: string;
-}

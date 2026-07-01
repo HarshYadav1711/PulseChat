@@ -6,7 +6,7 @@ import type { ConnectionStatus } from "@/types";
 interface ChatHeaderProps {
   username: string;
   connectionStatus: ConnectionStatus;
-  onLeave?: () => void;
+  onLeave: () => void;
 }
 
 export function ChatHeader({ username, connectionStatus, onLeave }: ChatHeaderProps) {
@@ -19,18 +19,16 @@ export function ChatHeader({ username, connectionStatus, onLeave }: ChatHeaderPr
         <Text style={styles.subtitle}>Signed in as {username}</Text>
         <ConnectionIndicator status={connectionStatus} />
       </View>
-      {onLeave ? (
-        <Pressable
-          onPress={onLeave}
-          style={styles.leaveButton}
-          hitSlop={8}
-          accessibilityRole="button"
-          accessibilityLabel="Leave chat"
-          accessibilityHint="Returns to the login screen"
-        >
-          <Text style={styles.leaveText}>Leave</Text>
-        </Pressable>
-      ) : null}
+      <Pressable
+        onPress={onLeave}
+        style={styles.leaveButton}
+        hitSlop={8}
+        accessibilityRole="button"
+        accessibilityLabel="Leave chat"
+        accessibilityHint="Returns to the login screen"
+      >
+        <Text style={styles.leaveText}>Leave</Text>
+      </Pressable>
     </View>
   );
 }

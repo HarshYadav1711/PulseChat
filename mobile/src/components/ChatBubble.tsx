@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { colors, radii, spacing, typography } from "@/theme";
 import type { Message } from "@/types";
@@ -8,7 +9,7 @@ interface ChatBubbleProps {
   isOwnMessage: boolean;
 }
 
-export function ChatBubble({ message, isOwnMessage }: ChatBubbleProps) {
+function ChatBubbleComponent({ message, isOwnMessage }: ChatBubbleProps) {
   const timestamp = formatTimestamp(message.timestamp);
   const accessibilityLabel = isOwnMessage
     ? `You said ${message.text}${timestamp ? `, ${timestamp}` : ""}`
@@ -17,15 +18,15 @@ export function ChatBubble({ message, isOwnMessage }: ChatBubbleProps) {
   return (
     <View
       style={[styles.row, isOwnMessage ? styles.rowOwn : styles.rowOther]}
+      accessible
       accessibilityRole="text"
       accessibilityLabel={accessibilityLabel}
     >
-      <View style={[styles.bubble, isOwnMessage ? styles.bubbleOwn : styles.bubbleOther]}>
-        {!isOwnMessage ? (
-          <Text style={styles.username} accessibilityRole="header">
-            {message.username}
-          </Text>
-        ) : null}
+      <View
+        style={[styles.bubble, isOwnMessage ? styles.bubbleOwn : styles.bubbleOther]}
+        importantForAccessibility="no-hide-descendants"
+      >
+        {!isOwnMessage ? <Text style={styles.username}>{message.username}</Text> : null}
         <Text style={[styles.text, isOwnMessage ? styles.textOwn : styles.textOther]}>
           {message.text}
         </Text>
@@ -40,6 +41,8 @@ export function ChatBubble({ message, isOwnMessage }: ChatBubbleProps) {
     </View>
   );
 }
+
+export const ChatBubble = memo(ChatBubbleComponent);
 
 const styles = StyleSheet.create({
   row: {

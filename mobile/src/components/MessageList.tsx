@@ -5,17 +5,16 @@ import { ChatEmptyState } from "@/components/ChatEmptyState";
 import { LoadingView } from "@/components/ui/LoadingView";
 import { useAutoScrollToEnd } from "@/hooks/useAutoScrollToEnd";
 import { spacing } from "@/theme";
-import type { ConnectionStatus, Message } from "@/types";
+import type { Message } from "@/types";
 
 interface MessageListProps {
   messages: Message[];
   currentUserId: string;
-  connectionStatus: ConnectionStatus;
+  isLoadingHistory: boolean;
 }
 
-export function MessageList({ messages, currentUserId, connectionStatus }: MessageListProps) {
-  const listRef = useAutoScrollToEnd<Message>(messages.length);
-  const isInitialLoad = connectionStatus === "connecting" && messages.length === 0;
+export function MessageList({ messages, currentUserId, isLoadingHistory }: MessageListProps) {
+  const { listRef, scrollToEnd } = useAutoScrollToEnd<Message>(messages.length);
 
   const renderItem: ListRenderItem<Message> = useCallback(
     ({ item }) => (
@@ -32,11 +31,14 @@ export function MessageList({ messages, currentUserId, connectionStatus }: Messa
       renderItem={renderItem}
       contentContainerStyle={[
         styles.content,
-        (messages.length === 0 || isInitialLoad) && styles.contentCentered,
+        (messages.length === 0 || isLoadingHistory) && styles.contentCentered,
       ]}
       keyboardShouldPersistTaps="handled"
+      onContentSizeChange={scrollToEnd}
+      initialNumToRender={20}
+      windowSize={11}
       ListEmptyComponent={
-        isInitialLoad ? (
+        isLoadingHistory ? (
           <LoadingView message="Connecting to chat…" />
         ) : (
           <ChatEmptyState />

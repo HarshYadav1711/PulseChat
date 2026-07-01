@@ -6,6 +6,11 @@ import {
 } from "@/config/constants";
 import { env } from "@/config/env";
 import type { ConnectionStatus, Message, Session } from "@/types";
+import {
+  parseErrorPayload,
+  parseHistoryPayload,
+  parseNewMessagePayload,
+} from "@/utils/socketPayloads";
 
 export interface ChatSocketCallbacks {
   onConnectionStatusChange: (status: ConnectionStatus) => void;
@@ -42,9 +47,9 @@ export class ChatSocketService {
     }
   }
 
-  sendMessage(text: string): void {
+  sendMessage(text: string): boolean {
     if (!this.session || !this.socket?.connected) {
-      return;
+      return false;
     }
 
     this.socket.emit(SOCKET_EVENTS.SEND_MESSAGE, {
@@ -52,6 +57,8 @@ export class ChatSocketService {
       username: this.session.username,
       text,
     });
+
+    return true;
   }
 
   disconnect(): void {
@@ -75,20 +82,36 @@ export class ChatSocketService {
       callbacks.onConnectionStatusChange("disconnected");
     });
 
+    socket.on("connect_error", () => {
+      callbacks.onConnectionStatusChange("connecting");
+    });
+
     socket.on("reconnect_attempt", () => {
       callbacks.onConnectionStatusChange("connecting");
     });
 
-    socket.on(SOCKET_EVENTS.HISTORY, (payload: { messages: Message[] }) => {
-      callbacks.onHistory(payload.messages);
+    socket.on(SOCKET_EVENTS.HISTORY, (payload: unknown) => {
+      try {
+        callbacks.onHistory(parseHistoryPayload(payload));
+      } catch {
+        callbacks.onError("Received invalid message history.");
+      }
     });
 
-    socket.on(SOCKET_EVENTS.NEW_MESSAGE, (payload: { message: Message }) => {
-      callbacks.onNewMessage(payload.message);
+    socket.on(SOCKET_EVENTS.NEW_MESSAGE, (payload: unknown) => {
+      try {
+        callbacks.onNewMessage(parseNewMessagePayload(payload));
+      } catch {
+        callbacks.onError("Received an invalid message.");
+      }
     });
 
-    socket.on(SOCKET_EVENTS.ERROR, (payload: { message: string }) => {
-      callbacks.onError(payload.message);
+    socket.on(SOCKET_EVENTS.ERROR, (payload: unknown) => {
+      try {
+        callbacks.onError(parseErrorPayload(payload));
+      } catch {
+        callbacks.onError("An unexpected chat error occurred.");
+      }
     });
   }
 

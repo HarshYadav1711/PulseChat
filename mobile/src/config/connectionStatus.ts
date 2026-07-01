@@ -1,25 +1,26 @@
-import { colors } from "@/theme";
 import type { ConnectionStatus } from "@/types";
+
+export type ConnectionStatusTone = "success" | "warning" | "error";
 
 export interface ConnectionStatusConfig {
   label: string;
-  dotColor: string;
+  tone: ConnectionStatusTone;
   bannerMessage?: string;
 }
 
 export const CONNECTION_STATUS_CONFIG: Record<ConnectionStatus, ConnectionStatusConfig> = {
   connected: {
     label: "Connected",
-    dotColor: colors.success,
+    tone: "success",
   },
   connecting: {
     label: "Connecting",
-    dotColor: colors.warning,
+    tone: "warning",
     bannerMessage: "Connecting to chat…",
   },
   disconnected: {
     label: "Offline",
-    dotColor: colors.error,
+    tone: "error",
     bannerMessage: "You are offline. Messages will send when reconnected.",
   },
 };
@@ -28,6 +29,9 @@ export function getConnectionBannerMessage(status: ConnectionStatus): string | u
   return CONNECTION_STATUS_CONFIG[status].bannerMessage;
 }
 
-export function isChatReady(status: ConnectionStatus): boolean {
-  return status === "connected";
+export function isChatReady(state: {
+  connectionStatus: ConnectionStatus;
+  isJoined: boolean;
+}): boolean {
+  return state.connectionStatus === "connected" && state.isJoined;
 }

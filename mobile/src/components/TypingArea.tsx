@@ -8,11 +8,12 @@ import type { ConnectionStatus } from "@/types";
 interface TypingAreaProps {
   onSend: (text: string) => boolean;
   connectionStatus: ConnectionStatus;
+  isJoined: boolean;
 }
 
-export function TypingArea({ onSend, connectionStatus }: TypingAreaProps) {
+export function TypingArea({ onSend, connectionStatus, isJoined }: TypingAreaProps) {
   const insets = useSafeAreaInsets();
-  const disabled = !isChatReady(connectionStatus);
+  const disabled = !isChatReady({ connectionStatus, isJoined });
 
   return (
     <KeyboardAvoidingView

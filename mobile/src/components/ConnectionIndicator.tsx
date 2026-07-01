@@ -7,8 +7,14 @@ interface ConnectionIndicatorProps {
   status: ConnectionStatus;
 }
 
+const TONE_COLORS = {
+  success: colors.success,
+  warning: colors.warning,
+  error: colors.error,
+} as const;
+
 export function ConnectionIndicator({ status }: ConnectionIndicatorProps) {
-  const { label, dotColor } = CONNECTION_STATUS_CONFIG[status];
+  const { label, tone } = CONNECTION_STATUS_CONFIG[status];
 
   return (
     <View
@@ -16,7 +22,10 @@ export function ConnectionIndicator({ status }: ConnectionIndicatorProps) {
       accessibilityRole="text"
       accessibilityLabel={`Connection status: ${label}`}
     >
-      <View style={[styles.dot, { backgroundColor: dotColor }]} accessibilityElementsHidden />
+      <View
+        style={[styles.dot, { backgroundColor: TONE_COLORS[tone] }]}
+        accessibilityElementsHidden
+      />
       <Text style={styles.label}>{label}</Text>
     </View>
   );

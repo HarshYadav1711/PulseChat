@@ -14,7 +14,7 @@ class MessageStore {
       id: randomUUID(),
       userId: payload.userId,
       username: payload.username,
-      text: payload.text.trim(),
+      text: payload.text,
       timestamp: new Date().toISOString(),
     };
 

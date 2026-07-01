@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, BackHandler, StyleSheet, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ChatHeader } from "@/components/ChatHeader";
 import { ConnectionBanner } from "@/components/ConnectionBanner";
@@ -19,7 +19,8 @@ interface ChatViewProps {
 }
 
 function ChatView({ session, onLeave }: ChatViewProps) {
-  const { messages, connectionStatus, sendMessage } = useChat();
+  const { messages, connectionStatus, isJoined, sendMessage } = useChat();
+  const isLoadingHistory = !isJoined;
 
   return (
     <>
@@ -34,10 +35,14 @@ function ChatView({ session, onLeave }: ChatViewProps) {
       <MessageList
         messages={messages}
         currentUserId={session.userId}
-        connectionStatus={connectionStatus}
+        isLoadingHistory={isLoadingHistory}
       />
 
-      <TypingArea onSend={sendMessage} connectionStatus={connectionStatus} />
+      <TypingArea
+        onSend={sendMessage}
+        connectionStatus={connectionStatus}
+        isJoined={isJoined}
+      />
     </>
   );
 }
@@ -64,6 +69,17 @@ export function ChatScreen({ navigation }: ChatScreenProps) {
       },
     ]);
   }, [navigation, setSession]);
+
+  useEffect(() => {
+    const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
+      handleLeave();
+      return true;
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [handleLeave]);
 
   if (!session) {
     return null;

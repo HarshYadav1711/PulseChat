@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 import { colors, radii, spacing, typography } from "@/theme";
 
@@ -16,11 +17,20 @@ export function PrimaryButton({
   accessibilityHint,
   compact = false,
 }: PrimaryButtonProps) {
+  const [isPressed, setIsPressed] = useState(false);
+
   return (
     <Pressable
-      style={[styles.base, compact ? styles.compact : styles.default, disabled && styles.disabled]}
+      style={[
+        styles.base,
+        compact ? styles.compact : styles.default,
+        disabled && styles.disabled,
+        isPressed && !disabled && styles.pressed,
+      ]}
       onPress={onPress}
       disabled={disabled}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityHint={accessibilityHint}
@@ -49,6 +59,9 @@ const styles = StyleSheet.create({
   },
   disabled: {
     backgroundColor: colors.textMuted,
+  },
+  pressed: {
+    opacity: 0.85,
   },
   label: {
     ...typography.button,

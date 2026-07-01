@@ -18,6 +18,7 @@ import { isValidMessageText, normalizeMessageText } from "@/utils/messageValidat
 interface ChatContextValue {
   messages: Message[];
   connectionStatus: ConnectionStatus;
+  isJoined: boolean;
   sendMessage: (text: string) => boolean;
 }
 
@@ -54,27 +55,33 @@ export function ChatProvider({ session, children }: ChatProviderProps) {
       service.disconnect();
       dispatch({ type: "RESET" });
     };
-  }, [session.userId, session.username]);
+  }, [session]);
 
   const sendMessage = useCallback(
     (text: string): boolean => {
-      if (!isChatReady(state.connectionStatus) || !isValidMessageText(text)) {
+      if (
+        !isChatReady({
+          connectionStatus: state.connectionStatus,
+          isJoined: state.isJoined,
+        }) ||
+        !isValidMessageText(text)
+      ) {
         return false;
       }
 
-      socketServiceRef.current.sendMessage(normalizeMessageText(text));
-      return true;
+      return socketServiceRef.current.sendMessage(normalizeMessageText(text));
     },
-    [state.connectionStatus],
+    [state.connectionStatus, state.isJoined],
   );
 
   const value = useMemo(
     () => ({
       messages: state.messages,
       connectionStatus: state.connectionStatus,
+      isJoined: state.isJoined,
       sendMessage,
     }),
-    [sendMessage, state.connectionStatus, state.messages],
+    [sendMessage, state.connectionStatus, state.isJoined, state.messages],
   );
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;

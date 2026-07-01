@@ -40,7 +40,10 @@ export default tseslint.config(
   {
     files: ["mobile/**/*.{ts,tsx}"],
     languageOptions: {
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        __DEV__: "readonly",
+      },
     },
     plugins: {
       react: pluginReact,

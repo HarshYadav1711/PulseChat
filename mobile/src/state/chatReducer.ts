@@ -3,11 +3,13 @@ import type { ConnectionStatus, Message } from "@/types";
 export interface ChatState {
   messages: Message[];
   connectionStatus: ConnectionStatus;
+  isJoined: boolean;
 }
 
 export const initialChatState: ChatState = {
   messages: [],
   connectionStatus: "connecting",
+  isJoined: false,
 };
 
 export type ChatAction =
@@ -19,9 +21,17 @@ export type ChatAction =
 export function chatReducer(state: ChatState, action: ChatAction): ChatState {
   switch (action.type) {
     case "CONNECTION_STATUS_CHANGED":
-      return { ...state, connectionStatus: action.status };
+      return {
+        ...state,
+        connectionStatus: action.status,
+        isJoined: action.status === "connected" ? state.isJoined : false,
+      };
     case "HISTORY_RECEIVED":
-      return { ...state, messages: action.messages };
+      return {
+        ...state,
+        messages: action.messages,
+        isJoined: true,
+      };
     case "MESSAGE_RECEIVED":
       if (state.messages.some((item) => item.id === action.message.id)) {
         return state;
@@ -29,7 +39,9 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
       return { ...state, messages: [...state.messages, action.message] };
     case "RESET":
       return initialChatState;
-    default:
-      return state;
+    default: {
+      const exhaustiveCheck: never = action;
+      return exhaustiveCheck;
+    }
   }
 }

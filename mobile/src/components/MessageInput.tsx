@@ -35,7 +35,6 @@ export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
         multiline
         maxLength={MESSAGE_MAX_LENGTH}
         editable={!disabled}
-        onSubmitEditing={handleSend}
         blurOnSubmit={false}
         accessibilityLabel="Message input"
         accessibilityHint="Type your message and press send"
