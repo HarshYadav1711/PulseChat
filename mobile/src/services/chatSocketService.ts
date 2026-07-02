@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { io, type Socket } from "socket.io-client";
 import {
   SOCKET_EVENTS,
@@ -28,7 +29,8 @@ export class ChatSocketService {
     this.session = session;
 
     const socket = io(env.serverUrl, {
-      transports: ["websocket"],
+      // Web needs the default polling → websocket upgrade; native can use websocket only.
+      ...(Platform.OS !== "web" && { transports: ["websocket"] }),
       autoConnect: true,
       reconnection: true,
       reconnectionAttempts: Infinity,
