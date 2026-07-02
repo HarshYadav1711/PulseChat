@@ -52,7 +52,7 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
       >
         <View style={styles.content}>
           <Text style={styles.title} accessibilityRole="header">
-            Welcome
+            PulseChat
           </Text>
           <Text style={styles.subtitle}>
             Choose a display name to enter the chat. No password required.

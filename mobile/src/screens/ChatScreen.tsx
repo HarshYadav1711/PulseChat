@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { Alert, BackHandler, StyleSheet, View } from "react-native";
+import { Alert, BackHandler, Platform, StyleSheet, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ChatView } from "@/components/ChatView";
 import { ScreenContainer } from "@/components/ui/ScreenContainer";
@@ -39,30 +39,39 @@ export function ChatScreen({ navigation }: ChatScreenProps) {
     }
   }, [navigation, session]);
 
-  const handleLeave = useCallback(() => {
-    Alert.alert("Leave chat?", "You will return to the login screen.", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Leave",
-        style: "destructive",
-        onPress: () => {
-          setSession(null);
-          navigation.replace("Login");
-        },
-      },
-    ]);
+  const leaveChat = useCallback(() => {
+    setSession(null);
+    navigation.replace("Login");
   }, [navigation, setSession]);
 
+  const confirmLeave = useCallback(() => {
+    if (Platform.OS === "web") {
+      if (window.confirm("Leave chat? You will return to the login screen.")) {
+        leaveChat();
+      }
+      return;
+    }
+
+    Alert.alert("Leave chat?", "You will return to the login screen.", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Leave", style: "destructive", onPress: leaveChat },
+    ]);
+  }, [leaveChat]);
+
   useEffect(() => {
+    if (Platform.OS !== "android") {
+      return;
+    }
+
     const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
-      handleLeave();
+      confirmLeave();
       return true;
     });
 
     return () => {
       subscription.remove();
     };
-  }, [handleLeave]);
+  }, [confirmLeave]);
 
   if (!session) {
     return null;
@@ -72,7 +81,7 @@ export function ChatScreen({ navigation }: ChatScreenProps) {
     <ScreenContainer edges={["top"]}>
       <View style={styles.content}>
         <ChatProvider session={session}>
-          <ChatScreenContent session={session} onLeave={handleLeave} />
+          <ChatScreenContent session={session} onLeave={leaveChat} />
         </ChatProvider>
       </View>
     </ScreenContainer>
